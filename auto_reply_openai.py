@@ -45,8 +45,7 @@ async def echo(websocket):
         print(f"Received message: {message}")
         payload = [
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": message}
-            ] + message_log
+            ] + message_log + [{"role": "user", "content": message}]
         print(payload)
         response = openai.ChatCompletion.create(
             model = "gpt-3.5-turbo",
