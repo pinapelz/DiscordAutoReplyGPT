@@ -55,7 +55,7 @@ async def echo(websocket):
         print(response.choices[0].message["content"]) # type: ignore
         pyautogui.moveTo(window_pos.x, window_pos.y, 1)
         pyautogui.click()
-        pyautogui.write(str(response.text), interval=0.03)
+        pyautogui.write(str(response.choices[0].message["content"]), interval=0.03)
         pyautogui.press('enter')
         message_log += [{"role": "user", "content": message}, {"role": "assistant", "content": response.choices[0].message["content"]}]
         await websocket.send(response.choices[0].message["content"]) # type: ignore
