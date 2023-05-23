@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import pyautogui
 import time
+import requests
 
 
 class DiscordMessenger(ABC):
@@ -10,12 +11,12 @@ class DiscordMessenger(ABC):
         pass
 
 
-class DiscordMacroMessage(ABC):
+class DiscordMacroMessage(DiscordMessenger):
     def __init__(self) -> None:
         super().__init__()
-        self._window_pos = None
+        self._setup_window_position()
 
-    def setup_window_position(self) -> None:
+    def _setup_window_position(self) -> None:
         def ask_confirm():
             while True:
                 print("Enter 'p' to playback moving to mouse pos, 'c' to confirm position, 'r' to redo positioning")
@@ -44,4 +45,20 @@ class DiscordMacroMessage(ABC):
         pyautogui.click()
         pyautogui.write(str(message), interval=0.03)
         pyautogui.press('enter')
+
+
+class DiscordRequestMessenger(DiscordMessenger):
+    def __init__(self, channel_id: str, authorization: str, base_url: str = "https://discord.com/api/v9/channels/") -> None:
+        super().__init__()
+        self._channel_id = channel_id
+        self._headers  = {
+            "authorization": authorization
+        }
+        self._url = base_url + channel_id + "/messages"
+    def send_message(self, message: str) -> None:
+        payload={
+            "content": message
+        }
+        requests.post(self._url, data=payload, headers=self._headers)
+
     
