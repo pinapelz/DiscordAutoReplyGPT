@@ -22,16 +22,22 @@ socket.onclose = function (event) {
 
 
 module.exports = meta => {
-  let userId = 232146633830170624;
+  // Both values can be retrieved by right clicking on a channel or user and selecting "Copy ID" after turning on Developer Mode in Discord settings
+  let listenChannelId = 1; // Channel ID you want to listen to
+  let selfUserId = 1; // Your User ID (Ensure your own messages aren't broadcasted)
 
   const updateUserId = (value) => {
-    userId = value;
+    listenChannelId = value;
+  };
+
+  const updateSelfUserid = (value) => {
+    selfUserId = value;
   };
 
   return {
     onMessage: ({message, channelId}) => {
-      if (message["author"]["id"] == userId) {
-        console.log(channelId);
+      if (message["author"]["id"] != selfUserId && channelId == listenChannelId) {
+        console.log(listenChannelId);
         if (socket.readyState === WebSocket.OPEN) {
           console.log(message)
           socket.send(message["content"]);
@@ -47,25 +53,52 @@ module.exports = meta => {
       Dispatcher.unsubscribe('MESSAGE_CREATE', this.onMessage);
     },
 
-    getSettingsPanel: () => {
-      const panel = document.createElement('div');
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.placeholder = 'Enter User ID';
-      input.value = userId;
-      input.addEventListener('input', (event) => {
-        updateUserId(event.target.value);
-      });
-      panel.appendChild(input);
+      getSettingsPanel: () => {
+        const panel = document.createElement('div');
 
-      const saveButton = document.createElement('button');
-      saveButton.textContent = 'Save';
-      saveButton.addEventListener('click', () => {
-        BdApi.saveData(meta.name, 'userId', userId);
-      });
-      panel.appendChild(saveButton);
+        // Cahnnel ID input field
+        const userIdContainer = document.createElement('div');
+        const userIdLabel = document.createElement('label');
+        userIdLabel.textContent = 'Channel ID:';
+        userIdContainer.appendChild(userIdLabel);
+        const userIdInput = document.createElement('input');
+        userIdInput.type = 'text';
+        userIdInput.placeholder = 'Enter Channel ID';
+        userIdInput.value = listenChannelId;
+        userIdInput.addEventListener('input', (event) => {
+          updateUserId(event.target.value);
+        });
+        userIdContainer.appendChild(userIdInput);
+        panel.appendChild(userIdContainer);
 
-      return panel;
-    }
-  };
+        // Self User ID input field
+        const selfUserIdContainer = document.createElement('div');
+        const selfUserIdLabel = document.createElement('label');
+        selfUserIdLabel.textContent = 'Self User ID:';
+        selfUserIdContainer.appendChild(selfUserIdLabel);
+        const selfUserIdInput = document.createElement('input');
+        selfUserIdInput.type = 'text';
+        selfUserIdInput.placeholder = 'Enter Self User ID';
+        selfUserIdInput.value = selfUserId;
+        selfUserIdInput.addEventListener('input', (event) => {
+          updateSelfUserid(event.target.value);
+        });
+        selfUserIdContainer.appendChild(selfUserIdInput);
+        panel.appendChild(selfUserIdContainer);
+
+        // Save button
+        const saveButton = document.createElement('button');
+        saveButton.textContent = 'Save';
+        saveButton.addEventListener('click', () => {
+          socket = new WebSocket('ws://localhost:8765');
+          BdApi.saveData(meta.name, 'userId', listenChannelId);
+        });
+        panel.appendChild(saveButton);
+
+        return panel;
+      }
+      };
+    
+
+
 };
