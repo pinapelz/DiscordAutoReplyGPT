@@ -14,9 +14,9 @@ def load_config() -> dict:
 class AutoReply:
     def __init__(self, config: dict) -> None:
         super().__init__()
-        self._llm = GPT4FreeAPI()
         self._messenger = None
         self._config : dict = config
+        self._select_llm()
         print("Configuration loaded, AutoReply Server ready. Waiting for WebSocket connection...")
     
     def _select_llm(self) -> None:
