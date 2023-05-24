@@ -48,17 +48,16 @@ class DiscordMacroMessage(DiscordMessenger):
 
 
 class DiscordRequestMessenger(DiscordMessenger):
-    def __init__(self, channel_id: str, authorization: str, base_url: str = "https://discord.com/api/v9/channels/") -> None:
+    def __init__(self, authorization: str, base_url: str = "https://discord.com/api/v9/channels/") -> None:
         super().__init__()
-        self._channel_id = channel_id
         self._headers  = {
             "authorization": authorization
         }
-        self._url = base_url + channel_id + "/messages"
-    def send_message(self, message: str) -> None:
+        self._base_url = base_url
+    def send_message(self, message: str, channel_id: str) -> None:
         payload={
             "content": message
         }
-        requests.post(self._url, data=payload, headers=self._headers)
+        requests.post(self._base_url + channel_id + "/messages", data=payload, headers=self._headers)
 
     

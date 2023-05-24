@@ -1,5 +1,6 @@
 
 import asyncio
+from reply_config import REPLY_TO
 from websockets.server import serve
 from gpt4free_api import GPT4FreeAPI
 from openai_api import OpenAIAPI
@@ -29,19 +30,23 @@ class AutoReply:
 
     async def reply(self, websocket) -> None:
         print("WebSocket connection established. Initializing Discord Messenger...")
-        if self._config["DISCORD_CHANNEL_ID"] != "" and self._config["DISCORD_AUTHORIZATION"] != "":
+        if self._config["DISCORD_AUTHORIZATION"] != "":
             print("Discord Channel ID and Authorization found, using requests to send messages")
-            self._messenger = DiscordRequestMessenger(self._config["DISCORD_CHANNEL_ID"],self._config["DISCORD_AUTHORIZATION"])
+            self._messenger = DiscordRequestMessenger(self._config["DISCORD_AUTHORIZATION"])
         else:
             print("Defaulting to Discord Macro Message for sending messages, preparing to capture window position...")
             self._messenger = DiscordMacroMessage()
         print("Discord Messenger initialized. Waiting for messages...")
         async for message in websocket:
+            msg_json = json.loads(message)
+            msg_tuple = (msg_json["author"], msg_json["channel"])
+            if msg_tuple not in REPLY_TO:
+                continue
             print(f"Received message: {message}")
-            response: str = self._llm.get_response(message)
+            response: str = self._llm.get_response(msg_json["content"])
             print(f"Sending response: {response}")
-            self._messenger.send_message(response)
-            await websocket.send(response)
+            self._messenger.send_message(response, msg_json["channel"]) # Reply to the same channel
+            await websocket.send("")
 
     
     

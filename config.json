@@ -1,7 +1,6 @@
 {
     "OPENAI_API_KEY": "",
     "DISCORD_AUTHORIZATION": "",
-    "DISCORD_CHANNEL_ID": "",
     "WEBSOCKET_HOST": "localhost",
     "WEBSOCKET_PORT": 8765
 }
