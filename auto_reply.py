@@ -40,7 +40,7 @@ class AutoReply:
         async for message in websocket:
             msg_json = json.loads(message)
             msg_tuple = (msg_json["author"], msg_json["channel"])
-            if msg_tuple not in REPLY_TO:
+            if msg_tuple not in REPLY_TO or msg_json["content"] == "":
                 continue
             print(f"Received message: {message}")
             response: str = self._llm.get_response(msg_json["content"])
