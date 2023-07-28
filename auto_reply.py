@@ -1,9 +1,9 @@
 
 import asyncio
-from reply_config import REPLY_TO
+from reply_config import REPLY_TO, CONTEXT_MESSAGE
 from websockets.server import serve
-from gpt4free_api import GPT4FreeAPI
-from openai_api import OpenAIAPI
+from llm.gpt4free_api import GPT4FreeAPI
+from llm.openai_api import OpenAIAPI
 from discord_messenger import DiscordMacroMessage, DiscordRequestMessenger
 import json
 
@@ -23,10 +23,10 @@ class AutoReply:
     def _select_llm(self) -> None:
         if self._config["OPENAI_API_KEY"] != "":
             print("OpenAI API Key found, using OpenAI API for responses")
-            self._llm = OpenAIAPI(self._config["OPENAI_API_KEY"])
+            self._llm = OpenAIAPI(3, self._config["OPENAI_API_KEY"], CONTEXT_MESSAGE)
         else:
             print("Defaulting to GPT4Free API for responses")
-            self._llm = GPT4FreeAPI()
+            self._llm = GPT4FreeAPI(4)
 
     async def reply(self, websocket) -> None:
         print("WebSocket connection established. Initializing Discord Messenger...")
