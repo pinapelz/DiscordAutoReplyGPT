@@ -19,9 +19,9 @@ Configure `config.json` with information regarding where your WebSocket server i
 
 Supplying Authorization Token will result in messages being sent through a POST request (headless)
 
-    - If no Authorization Token is supplied then messages will be sent through recording window position and macros using pyautogui
+- If no Authorization Token is supplied then messages will be sent through recording window position and macros using pyautogui
 
-    - You will be prompted to configure the macro area after a connection has been established with the WebSocket server
+- You will be prompted to configure the macro area after a connection has been established with the WebSocket server
 
 Configure `reply_config.py` with pairs of User ID and Channel ID conditions that you want to reply to. You can also configure a `CONTEXT_MESSAGE` which can help you specify how you want the AI to respond (OpenAI GPT only).
 
