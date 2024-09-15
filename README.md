@@ -3,7 +3,7 @@ Respond to Discord messages automatically with the power of LLMs.
 
 ## Install Helper Plugin
 Requires BetterDiscord to be installed in order to run the helper plugin (Websocket Server).
-- Add `Replier.plugin.js` into the BetterDiscord plugins folder
+- Add `BDFireToWebsocket.plugin.js` in the BDFireToWebSocket folder into the BetterDiscord plugins folder
 
 - Click the Cog icon and configure the plugin with your Discord Channel ID
 
